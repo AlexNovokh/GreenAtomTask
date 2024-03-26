@@ -5,6 +5,9 @@ import psutil
 
 app = FastAPI()
 
+# Название файла, содержащего код робота
+filename = "robot.py"  
+
 
 @app.get("/")
 async def root():
@@ -14,7 +17,7 @@ async def root():
 # Запуск робота
 @app.get("/start_robot")
 async def start_robot(start_number: int = Query(0)):
-    subprocess.Popen(["python", "robot.py", str(start_number)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.Popen(["python", filename, str(start_number)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return {"message": f"Robot started from number {start_number}"}
 
 
@@ -24,7 +27,8 @@ async def stop_robot():
     for proc in psutil.process_iter():
         try:
             cmdline = proc.cmdline()
-            if cmdline and cmdline[0] == "python" and "robot.py" in cmdline[1:]:
+            # Поиск команды запуска файла
+            if cmdline and cmdline[0] == "python" and filename in cmdline[1:]:  
                 proc.kill()
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
