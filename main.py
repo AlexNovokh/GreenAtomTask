@@ -10,7 +10,7 @@ app = FastAPI()
 # Название файла, содержащего код робота
 filename = "robot.py"
 
-arr = ['0', '', '']
+arr = [0, 0, 0]
 
 
 # Проверка состояния робота
@@ -27,7 +27,7 @@ def has_started():
 
 @app.get("/")
 async def root():
-    return {"message": f"You can start_robot, stop_robot"}
+    return {"message": f"You can start_robot, stop_robot or see_history"}
 
 # Запуск робота
 @app.get("/start_robot")
@@ -57,19 +57,22 @@ async def stop_robot():
 
 # Внесение данных в базу данных
 def work_with_db():
-    con = sqlite3.connect("robot_hystory.db")
-    cur = con.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS rb_history(start_number TEXT, "
-                "start_time TEXT, total_time TEXT)")
-    cur.execute(f"INSERT INTO rb_history(start_number, start_time, total_time) VALUES('{arr[0]}', '{arr[1]}', '{arr[2]}')")
-    con.commit()
-    con.close()
+    with sqlite3.connect("robot_history1.db") as db:
+        cur = db.cursor()
+        cur.execute("CREATE TABLE IF NOT EXISTS rb_history(start_number TEXT, "
+                    "start_time TEXT, total_time TEXT)")
+        cur.execute(f"INSERT INTO rb_history(start_number, start_time, total_time) VALUES('{arr[0]}', '{arr[1]}', '{arr[2]}')")
+        db.commit()
 
 
 # Просмотр таблицы с историей запусков робота
 @app.get("/see_history")
-def see_history():
-    return {"message": f"History table will be here"}
+async def see_history():
+    with sqlite3.connect("robot_history1.db") as db:
+        cur = db.cursor()
+        res = cur.execute(f"SELECT * FROM rb_history")
+        db.commit()
+        return {"history": f"{res.fetchall()}"}
 
 
 # Запуск веб-сервера
