@@ -29,7 +29,7 @@ def has_started():
 
 @app.get("/")
 async def root():
-    return {"message": f"You can start_robot, stop_robot"}
+    return {"message": f"You can start_robot, stop_robot or see_history"}
 
 
 # Запуск робота
@@ -62,8 +62,8 @@ async def stop_robot():
 def work_with_db():
     with sqlite3.connect(dbname) as db:
         cur = db.cursor()
-        cur.execute(open('create.sql').read()) # Создать таблицу
-        cur.execute(open('insert.sql').read()) # Вставить значения
+        cur.execute(open('create.sql').read())  # Создать таблицу
+        cur.execute(open('insert.sql').read())  # Вставить значения
         db.commit()
 
 
