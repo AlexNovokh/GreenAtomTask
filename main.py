@@ -62,9 +62,8 @@ async def stop_robot():
 def work_with_db():
     with sqlite3.connect(dbname) as db:
         cur = db.cursor()
-        cur.execute("CREATE TABLE IF NOT EXISTS rb_history(start_number TEXT, "
-                    "start_time TEXT, total_time TEXT)")
-        cur.execute(f"INSERT INTO rb_history(start_number, start_time, total_time) VALUES('{row[0]}', '{row[1]}', '{row[2]}')")
+        cur.execute(open('create.sql').read()) # Создать таблицу
+        cur.execute(open('insert.sql').read()) # Вставить значения
         db.commit()
 
 
@@ -74,7 +73,8 @@ async def see_history():
     with sqlite3.connect(dbname) as db:
         cur = db.cursor()
         try:
-            res = cur.execute(f"SELECT * FROM rb_history")
+            # Показать таблицу
+            res = cur.execute(open('show.sql').read())
             db.commit()
             return {"history": f"{res.fetchall()}"}
         except sqlite3.OperationalError:
