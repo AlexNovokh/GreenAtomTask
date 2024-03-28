@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS rb_history(start_number TEXT, start_time TEXT, total_time TEXT)

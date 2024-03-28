@@ -1,0 +1,1 @@
+ INSERT INTO rb_history(start_number, start_time, total_time) VALUES('{row[0]}', '{row[1]}', '{row[2]}')
